@@ -45,7 +45,7 @@ public class ConsumerThread implements Runnable {
                 outToServer.write(ByteBuffer.allocate(4).putInt(msg.length+4+topic.length+8+4).array());
                 outToServer.write(ByteBuffer.allocate(4).putInt(topic.length).array()); //4
                 outToServer.write(ByteBuffer.allocate(8).putLong(offset).array()); //8
-                outToServer.write(ByteBuffer.allocate(4).putLong(partition).array()); //4
+                outToServer.write(ByteBuffer.allocate(4).putInt(partition).array()); //4
                 outToServer.write(topic); //topic.length
                 outToServer.write(msg);
                 outToServer.flush();
