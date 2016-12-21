@@ -39,7 +39,7 @@ public class ConsumerThread implements Runnable {
             while (it.hasNext()) {
                 MessageAndMetadata<byte[], byte[]> messageAndMetadata = it.next();
                 byte[] msg = messageAndMetadata.message();
-                byte[] topic = messageAndMetadata.topic();
+                byte[] topic = messageAndMetadata.topic().getBytes();
                 long offset = messageAndMetadata.offset();
                 int partition = messageAndMetadata.partition();
                 outToServer.write(ByteBuffer.allocate(4).putInt(msg.length+4+topic.length+8+4).array());
