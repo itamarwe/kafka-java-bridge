@@ -67,6 +67,7 @@ public class MultiThreadHLConsumer {
     public void stop(){
         if (consumer != null) {
             consumer.shutdown();
+            consumer.commitOffsets();
         }
 
         if (executor != null) {
