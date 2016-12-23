@@ -9,22 +9,26 @@ import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by elio on 4/17/2016.
  */
 public class ConsumerThread implements Runnable {
 
+    private boolean paused;
     private KafkaStream stream;
     private int threadNumber;
     private ThreadExceptionListener exceptionListener;
     private int consumerServerPort;
+    private AtomicBoolean isPaused;
 
-    public ConsumerThread(KafkaStream stream, int threadNumber, int consumerServerPort, ThreadExceptionListener exceptionListener) {
+    public ConsumerThread(KafkaStream stream, int threadNumber, int consumerServerPort, ThreadExceptionListener exceptionListener, AtomicBoolean isPaused) {
         this.threadNumber = threadNumber;
         this.stream = stream;
         this.exceptionListener = exceptionListener;
         this.consumerServerPort = consumerServerPort;
+        this.isPaused = isPaused;
     }
 
     @Override
@@ -37,6 +41,9 @@ public class ConsumerThread implements Runnable {
             clientSocket = new Socket("localhost", consumerServerPort);
             BufferedOutputStream outToServer = new BufferedOutputStream(clientSocket.getOutputStream(), 8192);
             while (it.hasNext()) {
+                while (isPaused.get()){
+                  isPaused.wait();
+                }
                 MessageAndMetadata<byte[], byte[]> messageAndMetadata = it.next();
                 byte[] msg = messageAndMetadata.message();
                 byte[] topic = messageAndMetadata.topic().getBytes();

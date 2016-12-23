@@ -13,6 +13,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -32,6 +33,7 @@ public class MultiThreadHLConsumer {
     private long debugPrintIntervalMS;
     private int consumerServerPort;
     private Properties properties;
+    private AtomicBoolean isPaused;
 
     public MultiThreadHLConsumer(String zookeeper, String groupId, String topic, Properties clientProps, int consumerServerPort, int threadCount, ThreadExceptionListener exceptionListener){
         properties = new Properties();
@@ -45,6 +47,7 @@ public class MultiThreadHLConsumer {
         this.threadCount = threadCount;
         this.exceptionListener = exceptionListener;
         this.consumerServerPort = consumerServerPort;
+        this.isPaused = new AtomicBoolean(false);
     }
 
     public void start(){
@@ -59,7 +62,7 @@ public class MultiThreadHLConsumer {
 
         int threadNumber = 0;
         for (final KafkaStream stream : streams) {
-            executor.submit(new ConsumerThread(stream, threadNumber, consumerServerPort, exceptionListener));
+            executor.submit(new ConsumerThread(stream, threadNumber, consumerServerPort, exceptionListener, isPaused));
             threadNumber++;
         }
     }
@@ -80,5 +83,19 @@ public class MultiThreadHLConsumer {
                 executor.shutdownNow();
             }
         }
+    }
+
+    public void pause(){
+      synchornized (isPaused) {
+        isPaused.set(true);
+        isPaused.notifyAll();
+      }
+    }
+
+    public void resume(){
+      synchornized (isPaused) {
+        isPaused.set(false);
+        isPaused.notifyAll();
+      }
     }
 }
