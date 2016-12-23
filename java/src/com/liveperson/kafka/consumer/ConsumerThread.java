@@ -41,8 +41,10 @@ public class ConsumerThread implements Runnable {
             clientSocket = new Socket("localhost", consumerServerPort);
             BufferedOutputStream outToServer = new BufferedOutputStream(clientSocket.getOutputStream(), 8192);
             while (it.hasNext()) {
-                while (isPaused.get()){
-                  isPaused.wait();
+                synchronized (isPaused){
+                  while (isPaused.get()){
+                    isPaused.wait();
+                  }
                 }
                 MessageAndMetadata<byte[], byte[]> messageAndMetadata = it.next();
                 byte[] msg = messageAndMetadata.message();

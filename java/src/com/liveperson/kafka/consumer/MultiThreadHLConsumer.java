@@ -86,14 +86,14 @@ public class MultiThreadHLConsumer {
     }
 
     public void pause(){
-      synchornized (isPaused) {
+      synchronized (isPaused) {
         isPaused.set(true);
         isPaused.notifyAll();
       }
     }
 
     public void resume(){
-      synchornized (isPaused) {
+      synchronized (isPaused) {
         isPaused.set(false);
         isPaused.notifyAll();
       }
