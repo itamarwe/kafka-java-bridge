@@ -70,7 +70,7 @@ public class MultiThreadHLConsumer {
     public void stop(){
         if (consumer != null) {
             consumer.shutdown();
-            consumer.commitOffsets();
+            this.resume();
         }
 
         if (executor != null) {
