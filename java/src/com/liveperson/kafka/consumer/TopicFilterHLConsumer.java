@@ -2,6 +2,7 @@ package com.liveperson.kafka.consumer;
 
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
+import kafka.consumer.TopicFilter;
 import kafka.consumer.Whitelist;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
