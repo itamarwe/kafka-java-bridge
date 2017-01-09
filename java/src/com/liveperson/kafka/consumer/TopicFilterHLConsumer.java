@@ -55,7 +55,7 @@ public class TopicFilterHLConsumer {
 
     public void start(){
         consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(properties));
-        List<KafkaStream<byte[], byte[]>> streams  = consumer.createMessageStreamsByFilter(topicFilter, threadCount);
+        List<KafkaStream<byte[], byte[]>> streams  = consumer.createMessageStreamsByFilter(this.topicFilter, this.threadCount);
 
         executor = Executors.newFixedThreadPool(threadCount);
 
